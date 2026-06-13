@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or 'Titulo da Página' }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; line-height: 1.6; }
+        .box-exercicio { border: 1px solid #ccc; padding: 20px; margin-bottom: 25px; border-radius: 8px; background-color: #f9f9f9; max-width: 600px; }
+        h2 { margin-top: 0; color: #333; }
+        form { display: flex; flex-direction: column; gap: 10px; }
+        label { font-weight: bold; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        .resultado { margin-top: 15px; padding: 10px; border-left: 5px solid #007BFF; background-color: #eee; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Trabalho Web - Painel de Testes dos Exercícios</h1>
+        <p>Preencha os campos e veja o retorno do servidor Flask logo abaixo de cada formulário.</p>
+        <hr>
+    </header>
+
+    <div class="box-exercicio">
+        <h2>Desafio 3: Login de Usuário (POST)</h2>
+        <form id="form-login">
+            <label for="usuario">Usuário:</label>
+            <input type="text" id="usuario" required placeholder="Ex: genivaldo">
+            
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" required placeholder="Ex: jerusa">
+            
+            <button type="submit">Testar Login</button>
+        </form>
+        <div id="res-login" class="resultado" style="display: none;"></div>
+    </div>
+
+    <div class="box-exercicio">
+        <h2>Desafio 4: Validação de CPF (POST)</h2>
+        <form id="form-cpf">
+            <label for="nome-cpf">Nome do Cliente:</label>
+            <input type="text" id="nome-cpf" required placeholder="Ex: Rafael">
+            
+            <label for="input-cpf">CPF:</label>
+            <input type="text" id="input-cpf" required placeholder="Ex: 123.456.789-01">
+            
+            <button type="submit">Validar CPF</button>
+        </form>
+        <div id="res-cpf" class="resultado" style="display: none;"></div>
+    </div>
+
+    <div class="box-exercicio">
+        <h2>Desafio 5: Conversão de Temperatura (GET Dinâmico)</h2>
+        <form id="form-temp">
+            <label for="input-temp">Temperatura em Celsius (°C):</label>
+            <input type="number" step="0.1" id="input-temp" required placeholder="Ex: 25.5">
+            
+            <button type="submit">Converter para Fahrenheit</button>
+        </form>
+        <div id="res-temp" class="resultado" style="display: none;"></div>
+    </div>
+
+    <div class="box-exercicio">
+        <h2>Desafio 6: Filtro de Busca via Querystring (GET)</h2>
+        <form id="form-search">
+            <label for="input-search">Termo de Busca (q):</label>
+            <input type="text" id="input-search" placeholder="Deixe vazio para testar o erro obrigatório">
+            
+            <button type="submit">Executar Busca</button>
+        </form>
+        <div id="res-search" class="resultado" style="display: none;"></div>
+    </div>
+
+    <div class="box-exercicio">
+        <h2>Desafio 7: Validação de Maioridade (POST)</h2>
+        <form id="form-register">
+            <label for="nome-reg">Nome:</label>
+            <input type="text" id="nome-reg" required placeholder="Ex: Lucas">
+            
+            <label for="idade-reg">Idade:</label>
+            <input type="number" id="idade-reg" required placeholder="Ex: 18">
+            
+            <button type="submit">Registrar Usuário</button>
+        </form>
+        <div id="res-register" class="resultado" style="display: none;"></div>
+    </div>
+
+    <div class="box-exercicio">
+        <h2>Desafio 8: Simulador de Estoque (GET)</h2>
+        <form id="form-products">
+            <button type="submit">Listar Produtos do Estoque</button>
+        </form>
+        <div id="res-products" class="resultado" style="display: none;"></div>
+    </div>
+
+    <div class="box-exercicio">
+        <h2>Desafio 9: Header de Segurança Personalizado (GET)</h2>
+        <form id="form-admin">
+            <label for="input-key">Chave de API (X-Api-Key):</label>
+            <input type="text" id="input-key" placeholder="Ex: secret123">
+            
+            <button type="submit">Acessar Painel Admin</button>
+        </form>
+        <div id="res-admin" class="resultado" style="display: none;"></div>
+    </div>
+
+
+    <script>
+        // Função auxiliar para exibir o resultado abaixo do form
+        function exibirResultado(idDiv, dados) {
+            const div = document.getElementById(idDiv);
+            div.style.display = "block";
+            div.textContent = typeof dados === "object" ? JSON.stringify(dados, null, 2) : dados;
+        }
+
+        // 3. Teste de Login (POST)
+        document.getElementById('form-login').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const u = document.getElementById('usuario').value;
+            const s = document.getElementById('senha').value;
+            
+            fetch('/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `usuario=${encodeURIComponent(u)}&senha=${encodeURIComponent(s)}`
+            })
+            .then(res => res.text())
+            .then(data => exibirResultado('res-login', data));
+        });
+
+        // 4. Validação de CPF (POST)
+        document.getElementById('form-cpf').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const n = document.getElementById('nome-cpf').value;
+            const c = document.getElementById('input-cpf').value;
+            
+            fetch('/cliente/valida', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `nome=${encodeURIComponent(n)}&cpf=${encodeURIComponent(c)}`
+            })
+            .then(res => res.json())
+            .then(data => exibirResultado('res-cpf', data))
+            .catch(err => exibirResultado('res-cpf', "Erro 400: CPF Inválido"));
+        });
+
+        // 5. Conversão de Temperatura (GET Dinâmico)
+        document.getElementById('form-temp').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const t = document.getElementById('input-temp').value;
+            
+            fetch(`/convert/celsius/${t}`)
+            .then(res => res.json())
+            .then(data => exibirResultado('res-temp', data));
+        });
+
+        // 6. Filtro de Busca (GET QueryString)
+        document.getElementById('form-search').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const q = document.getElementById('input-search').value;
+            
+            fetch(`/search?q=${encodeURIComponent(q)}`)
+            .then(res => res.text())
+            .then(data => exibirResultado('res-search', data));
+        });
+
+        // 7. Maioridade (POST)
+        document.getElementById('form-register').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const n = document.getElementById('nome-reg').value;
+            const i = document.getElementById('idade-reg').value;
+            
+            fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `nome=${encodeURIComponent(n)}&idade=${encodeURIComponent(i)}`
+            })
+            .then(res => res.text().then(text => ({ status: res.status, body: text })))
+            .then(data => exibirResultado('res-register', `Status: ${data.status}\nResposta: ${data.body}`));
+        });
+
+        // 8. Simulador de Estoque (GET)
+        document.getElementById('form-products').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch('/products')
+            .then(res => res.json())
+            .then(data => exibirResultado('res-products', data));
+        });
+
+        // 9. Header de Segurança (GET com Header customizado)
+        document.getElementById('form-admin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const key = document.getElementById('input-key').value;
+            
+            fetch('/admin/dashboard', {
+                method: 'GET',
+                headers: { 'X-Api-Key': key }
+            })
+            .then(res => res.text().then(text => ({ status: res.status, body: text })))
+            .then(data => exibirResultado('res-admin', `Status: ${data.status}\nResposta: ${data.body}`));
+        });
+    </script>
+
+</body>
+</html>

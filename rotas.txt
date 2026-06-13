@@ -1,0 +1,12 @@
+
+http://127.0.0.1:5000/message
+
+http://127.0.0.1:5000/convert/celsius/25.5
+
+http://127.0.0.1:5000/search?q=python
+
+http://127.0.0.1:5000/search
+
+
+http://127.0.0.1:5000/products
+
